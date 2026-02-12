@@ -12,9 +12,37 @@
 
 #include "get_next_line.h"
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
-    return (0);
+    static char *storage = NULL;
+	char		*buffer;
+	
+	if (fd < 0 || BUFFER_SIZE <= 0) 
+		return (NULL);
+	buffer = ft_calloc(BUFFER_SIZE + 1, 1);
+	if (!buffer)
+	{
+		return (NULL);
+	}
+	storage = fill_line_buffer(fd, storage, buffer);
+	return (0);
+}
+
+char	*fill_line_buffer(int fd, char *storage, char *buffer)
+{
+	int readcount;
+	
+	readcount = 1;
+	while(storage && !ft_strchr(storage, '\n') && readcount != 0)
+	{
+		readcount = read(fd, buffer, BUFFER_SIZE);
+		if (readcount == -1)
+		{
+			free (buffer);
+			return (NULL);
+		}
+	}
+	return(0);
 }
 
 int main (void)
@@ -22,3 +50,4 @@ int main (void)
     int fd = 1;
     return (0);
 }
+
