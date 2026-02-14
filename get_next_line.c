@@ -106,7 +106,7 @@ char *save_remainder(char *str)
 
 int main(void)
 {
-    int fd = open("bible.txt", O_RDONLY);
+    int fd = open("brible.txt", O_RDONLY);
     char *line;
     int count = 0;
     
