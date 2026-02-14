@@ -14,8 +14,9 @@
 
 char	*get_next_line(int fd)
 {
-    static char *storage = NULL;
+    static char *str = NULL;
 	char		*buffer;
+	char		*line;
 	
 	if (fd < 0 || BUFFER_SIZE <= 0) 
 		return (NULL);
@@ -24,35 +25,86 @@ char	*get_next_line(int fd)
 	{
 		return (NULL);
 	}
-	storage = fill_line_buffer(fd, storage, buffer);
-	return (0);
+	str = fill_line_buffer(fd, str, buffer);
+	if (!str)
+		return (NULL);
+	line = extract_line(str);
+	if (!line)
+		return (NULL);
+	str = save_remainder(str);
+	return (line);
 }
 
-char	*fill_line_buffer(int fd, char *storage, char *buffer)
+char	*fill_line_buffer(int fd, char *str, char *buffer)
 {
-	char *temp;
-	int readcount;
+	char *tmp;
+	int i;
 	
-	readcount = 1;
-	while((!storage || !ft_strchr(storage, '\n')) && readcount != 0)
+	i = 1;
+	while((!str || !ft_strchr(str, '\n')) && i != 0)
 	{
-		readcount = read(fd, buffer, BUFFER_SIZE);
-		if (readcount == -1)
+		i = read(fd, buffer, BUFFER_SIZE);
+		if (i == -1)
 		{
-			free (buffer);
+			free(buffer);
+			free(str);
 			return (NULL);
 		}
-		buffer[readcount] = '\0';
-		temp = ft_strjoin(storage, buffer);
-		free(storage);
-		storage = temp;
+		buffer[i] = '\0';
+		tmp = ft_strjoin(str, buffer);
+		free(str);
+		str = tmp;
 	}
-	return(storage);
+	free(buffer);
+	return(str);
+}
+
+char *extract_line(char *str)
+{
+	char *line;
+	int i;
+	
+	i = 0;
+	if (!str)
+		return (NULL);
+	while (str[i] && str[i] != '\n')
+		i++;
+	if (str[i] == '\n')
+		i++;
+	line = ft_substr(str, 0, i);
+	return (line);
+}
+
+char *save_remainder(char *str)
+{
+	char *s;
+	int	i;
+	
+	i = 0;
+	if (!str)
+		return (NULL);
+	if (!ft_strchr(str, '\n'))
+	{	
+		free (str);
+		return (NULL);
+	}
+	while (str[i] && str[i] != '\n')
+		i++;
+	i++;
+	s = ft_substr(str, i, ft_strlen(str) - i);
+	free(str);
+	return (s);
 }
 
 int main (void)
 {
-    int fd = 1;
+    int fd = open("test.txt", O_RDONLY);
+	char *line;
+
+	line = get_next_line(fd);
+	printf("%s", line);
+	free (line);
+	close (fd);
     return (0);
 }
 
