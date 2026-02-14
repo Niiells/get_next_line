@@ -26,8 +26,11 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 	str = fill_line_buffer(fd, str, buffer);
-	if (!str)
+	if (!str || !str[0])
+	{
+		free(str);
 		return (NULL);
+	}
 	line = extract_line(str);
 	if (!line)
 		return (NULL);
@@ -51,9 +54,14 @@ char	*fill_line_buffer(int fd, char *str, char *buffer)
 			return (NULL);
 		}
 		buffer[i] = '\0';
-		tmp = ft_strjoin(str, buffer);
-		free(str);
-		str = tmp;
+		if (str == NULL)
+			str = ft_strdup(buffer);
+		else
+		{
+			tmp = ft_strjoin(str, buffer);
+			free(str);
+			str = tmp;
+		}
 	}
 	free(buffer);
 	return(str);
@@ -96,15 +104,26 @@ char *save_remainder(char *str)
 	return (s);
 }
 
-int main (void)
+int main(void)
 {
-    int fd = open("test.txt", O_RDONLY);
-	char *line;
-
-	line = get_next_line(fd);
-	printf("%s", line);
-	free (line);
-	close (fd);
+    int fd = open("bible.txt", O_RDONLY);
+    char *line;
+    int count = 0;
+    
+    if (fd < 0)
+    {
+        printf("Error opening file\n");
+        return (1);
+    }
+    
+    while ((line = get_next_line(fd)) != NULL)
+    {
+        count++;
+        printf("%s", line);
+        free(line);
+    }
+    
+    printf("\nTotal lines read: %d\n", count);
+    close(fd);
     return (0);
 }
-
