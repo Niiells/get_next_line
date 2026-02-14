@@ -30,10 +30,11 @@ char	*get_next_line(int fd)
 
 char	*fill_line_buffer(int fd, char *storage, char *buffer)
 {
+	char *temp;
 	int readcount;
 	
 	readcount = 1;
-	while(storage && !ft_strchr(storage, '\n') && readcount != 0)
+	while((!storage || !ft_strchr(storage, '\n')) && readcount != 0)
 	{
 		readcount = read(fd, buffer, BUFFER_SIZE);
 		if (readcount == -1)
@@ -41,8 +42,12 @@ char	*fill_line_buffer(int fd, char *storage, char *buffer)
 			free (buffer);
 			return (NULL);
 		}
+		buffer[readcount] = '\0';
+		temp = ft_strjoin(storage, buffer);
+		free(storage);
+		storage = temp;
 	}
-	return(0);
+	return(storage);
 }
 
 int main (void)
