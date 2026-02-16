@@ -85,7 +85,7 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 		return (ft_strdup(""));
 	if (len > ft_strlen((char *) s + start))
 		len = ft_strlen((char *)s + start);
-	s2 = (char *)ft_calloc(len + 1, sizeof(char));
+	s2 = (char *)malloc((len + 1) * sizeof(char));
 	if (!s2)
 		return (NULL);
 	while (i < len)
@@ -93,26 +93,6 @@ char	*ft_substr(const char *s, unsigned int start, size_t len)
 		s2[i] = s[start + i];
 		i++;
 	}
+	s2[i] = '\0';
 	return (s2);
-}
-
-void	*ft_calloc(size_t nmemb, size_t size)
-{
-	size_t	i;
-	char	*tmp;
-
-	i = 0;
-	if (size != 0 && nmemb > (SIZE_MAX) / size)
-		return (NULL);
-	if (!nmemb || !size)
-		return (malloc(0));
-	tmp = malloc(nmemb * size);
-	if (!tmp)
-		return (NULL);
-	while (i < (nmemb * size))
-	{
-		tmp[i] = 0;
-		i++;
-	}
-	return (tmp);
 }
