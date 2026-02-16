@@ -4,7 +4,7 @@
 
 A function that reads one line at a time from a file descriptor.
 
-## Usage
+## Instructions
 ```bash
 cc -Wall -Wextra -Werror -D BUFFER_SIZE=42 get_next_line.c get_next_line_utils.c main.c
 ```
