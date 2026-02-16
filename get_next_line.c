@@ -26,6 +26,8 @@ char	*get_next_line(int fd)
 		return (NULL);
 	}
 	str = fill_line_buffer(fd, str, buffer);
+	if (!str)
+		return (str = NULL);
 	if (!str || !str[0])
 	{
 		free(str);
@@ -48,12 +50,10 @@ char	*fill_line_buffer(int fd, char *str, char *buffer)
 	while ((!str || !ft_strchr(str, '\n')) && i != 0)
 	{
 		i = read(fd, buffer, BUFFER_SIZE);
-		if (i == -1)
-		{
-			free(buffer);
-			free(str);
+		if (i == -1 && (free(buffer), free(str), 1))
 			return (NULL);
-		}
+		if (i == 0)
+			break ;
 		buffer[i] = '\0';
 		if (str == NULL)
 			str = ft_strdup(buffer);
@@ -64,8 +64,7 @@ char	*fill_line_buffer(int fd, char *str, char *buffer)
 			str = tmp;
 		}
 	}
-	free(buffer);
-	return (str);
+	return (free(buffer), str);
 }
 
 char	*extract_line(char *str)
@@ -109,27 +108,24 @@ char	*save_remainder(char *str)
 	free(str);
 	return (s);
 }
-//
+
 // int main(void)
 // {
-//     int fd = open("brible.txt", O_RDONLY);
+//     int fd = open("test.txt", O_RDONLY);
 //     char *line;
-//     int count = 0;
 //
-//     if (fd < 0)
-//     {
-//         printf("Error opening file\n");
-//         return (1);
-//     }
+//     // Create test.txt with just "\n\n\n\n\n\n"
 //
-//     while ((line = get_next_line(fd)) != NULL)
+//     while ((line = get_next_line(fd)))
 //     {
-//         count++;
-//         printf("%s", line);
+//         printf("Got line\n");
 //         free(line);
 //     }
 //
-//     printf("\nTotal lines read: %d\n", count);
+//     printf("Calling one more time after NULL...\n");
+//     line = get_next_line(fd);  // This might be where it crashes
+//     printf("Result: %p\n", line);
+//
 //     close(fd);
 //     return (0);
 // }
