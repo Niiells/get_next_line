@@ -28,7 +28,7 @@ char	*get_next_line(int fd)
 	str = fill_line_buffer(fd, str, buffer);
 	if (!str)
 		return (str = NULL);
-	if (!str || !str[0])
+	if (!str[0])
 	{
 		free(str);
 		str = NULL;
@@ -108,24 +108,3 @@ char	*save_remainder(char *str)
 	free(str);
 	return (s);
 }
-
-// int main(void)
-// {
-//     int fd = open("test.txt", O_RDONLY);
-//     char *line;
-//
-//     // Create test.txt with just "\n\n\n\n\n\n"
-//
-//     while ((line = get_next_line(fd)))
-//     {
-//         printf("Got line\n");
-//         free(line);
-//     }
-//
-//     printf("Calling one more time after NULL...\n");
-//     line = get_next_line(fd);  // This might be where it crashes
-//     printf("Result: %p\n", line);
-//
-//     close(fd);
-//     return (0);
-// }
